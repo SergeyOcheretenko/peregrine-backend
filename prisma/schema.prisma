@@ -11,11 +11,28 @@ datasource db {
 }
 
 model User {
-  @@map("users")
-
   id        String   @id @default(uuid())
   email     String   @unique
   name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  googleCredentials GoogleCredentials? @relation(name: "GoogleCredentialsToUser")
+
+  @@map("users")
+}
+
+model GoogleCredentials {
+  id           String  @id @default(uuid())
+  accessToken  String?
+  refreshToken String?
+  scope        String?
+  expiryDate   String?
+  tokenType    String?
+  idToken      String?
+
+  user   User   @relation(name: "GoogleCredentialsToUser", fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+
+  @@map("google_credentials")
 }
