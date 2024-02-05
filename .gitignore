@@ -1,3 +1,6 @@
+# Credentials
+resources/google_credentials.json
+
 # IDEs
 .vscode
 
