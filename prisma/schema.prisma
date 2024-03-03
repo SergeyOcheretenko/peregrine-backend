@@ -10,29 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  googleCredentials GoogleCredentials? @relation(name: "GoogleCredentialsToUser")
-
-  @@map("users")
-}
-
 model GoogleCredentials {
   id           String  @id @default(uuid())
+  email        String  @unique
   accessToken  String?
   refreshToken String?
   scope        String?
-  expiryDate   String?
+  expiryDate   BigInt?
   tokenType    String?
   idToken      String?
-
-  user   User   @relation(name: "GoogleCredentialsToUser", fields: [userId], references: [id], onDelete: Cascade)
-  userId String @unique
 
   @@map("google_credentials")
 }

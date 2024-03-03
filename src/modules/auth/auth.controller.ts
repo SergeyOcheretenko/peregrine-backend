@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Response } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequest } from './request/login.request';
 
@@ -12,5 +12,7 @@ export class AuthController {
   }
 
   @Get('google/callback')
-  async googleCallback(@Query() code: string) {}
+  async googleCallback(@Query('code') code: string, @Response() response: any) {
+    return this.authService.googleCallback(code);
+  }
 }
