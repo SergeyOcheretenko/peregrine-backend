@@ -6,13 +6,17 @@ import { LoginRequest } from './request/login.request';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('google/login')
-  async login(@Body() request: LoginRequest) {
-    return this.authService.login(request);
+  @Get('/google/login')
+  async login() {
+    return this.authService.login();
   }
 
-  @Get('google/callback')
+  @Get('/google/callback')
   async googleCallback(@Query('code') code: string, @Response() response: any) {
-    return this.authService.googleCallback(code);
+    const account = await this.authService.googleCallback(code);
+
+    response.cookie('account', account.id, { httpOnly: false });
+
+    response.redirect('http://localhost:3000');
   }
 }

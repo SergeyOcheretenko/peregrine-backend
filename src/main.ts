@@ -7,6 +7,7 @@ async function bootstrap(port: number | string) {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(new ValidationPipe());
+  app.enableCors();
 
   await app.listen(port);
 }

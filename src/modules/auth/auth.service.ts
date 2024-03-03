@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { getOAuthClient } from '../../integrations/google/get-oauth-client';
-import { LoginRequest } from './request/login.request';
 import { PrismaService } from '../../integrations/prisma/prisma.service';
+import { GoogleCredentials } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async login(request: LoginRequest) {
+  async login() {
     const oAuthClient = await getOAuthClient();
     const url = oAuthClient.generateAuthUrl({
       access_type: 'offline',
@@ -16,10 +16,10 @@ export class AuthService {
         'https://mail.google.com/',
         'https://www.googleapis.com/auth/userinfo.profile',
       ],
-      login_hint: request.email,
+      // login_hint: request.email,
       // prompt: 'consent',
     });
-    return url;
+    return { url };
   }
 
   async googleCallback(code: string) {
@@ -36,8 +36,11 @@ export class AuthService {
       await this.prismaService.googleCredentials.findUnique({
         where: { email: payload.email },
       });
+
+    let account: GoogleCredentials;
+
     if (!existingAccount) {
-      await this.prismaService.googleCredentials.create({
+      account = await this.prismaService.googleCredentials.create({
         data: {
           email: payload.email,
           accessToken: tokens.access_token,
@@ -45,10 +48,11 @@ export class AuthService {
           scope: tokens.scope,
           tokenType: tokens.token_type,
           expiryDate: tokens.expiry_date,
+          picture: payload.picture,
         },
       });
     } else {
-      await this.prismaService.googleCredentials.update({
+      account = await this.prismaService.googleCredentials.update({
         where: { email: payload.email },
         data: {
           accessToken: tokens.access_token,
@@ -56,12 +60,13 @@ export class AuthService {
           scope: tokens.scope,
           tokenType: tokens.token_type,
           expiryDate: tokens.expiry_date,
+          picture: payload.picture,
         },
       });
     }
 
     // generate jwt
 
-    return;
+    return account;
   }
 }
