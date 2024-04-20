@@ -17,6 +17,6 @@ export class AuthController {
 
     response.cookie('account', account.id, { httpOnly: false });
 
-    response.redirect('http://localhost:3000');
+    response.redirect('http://localhost:3000/dashboard/inbox');
   }
 }
