@@ -12,4 +12,23 @@ export class GoogleMessagesController {
   ) {
     return this.googleMessagesService.listInboxMessages(credentialsId, amount);
   }
+
+  @Get(':credentialsId/spam-messages/:amount')
+  async listSpamMessages(
+    @Param('credentialsId') credentialsId: string,
+    @Param('amount') amount: number,
+  ) {
+    return this.googleMessagesService.listSpamMessages(credentialsId, amount);
+  }
+
+  @Get(':credentialsId/starred-messages/:amount')
+  async listStarredMessages(
+    @Param('credentialsId') credentialsId: string,
+    @Param('amount') amount: number,
+  ) {
+    return this.googleMessagesService.listStarredMessages(
+      credentialsId,
+      amount,
+    );
+  }
 }
